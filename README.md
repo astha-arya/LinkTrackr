@@ -1,5 +1,7 @@
 # LinkTrackr - Full-Stack URL Shortening Service
 
+### [Live Demo](https://linktrackr-frontend-4q220ph54-asthas-projects-a8790681.vercel.app/)
+
 A full-stack web application built with the MERN stack that allows users to shorten long URLs, manage their links, and track detailed click analytics.
 
 ## Features
