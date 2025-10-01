@@ -31,7 +31,8 @@ export default function CreateLinkForm({ onSuccess }: CreateLinkFormProps) {
       setCustomAlias('');
       onSuccess();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to create link');
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Failed to create link';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

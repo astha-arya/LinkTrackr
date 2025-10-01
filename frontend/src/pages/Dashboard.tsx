@@ -13,7 +13,7 @@ interface UserProfile {
 }
 
 interface Link {
-  _id: string;
+//   id: string;
   shortId: string;
   originalUrl: string;
   shortUrl: string;

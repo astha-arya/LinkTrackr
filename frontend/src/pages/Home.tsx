@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
+import { authService } from '../services/authService'; // <-- Import authService
 import { Link as LinkIcon, BarChart3, Shield, Zap } from 'lucide-react';
 
 export default function Home() {
+  const isAuthenticated = authService.isAuthenticated(); // <-- Check if user is logged in
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -15,19 +18,33 @@ export default function Home() {
           <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Shorten your URLs and track every click with powerful analytics
           </p>
+   
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/register"
-              className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-medium"
-            >
-              Get Started Free
-            </Link>
-            <Link
-              to="/login"
-              className="px-8 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-lg font-medium"
-            >
-              Sign In
-            </Link>
+            {isAuthenticated ? (
+              // If user is logged in, show this button
+              <Link
+                to="/dashboard"
+                className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-medium"
+              >
+                Go to Your Dashboard
+              </Link>
+            ) : (
+              // If user is logged out, show these buttons
+              <>
+                <Link
+                  to="/register"
+                  className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-medium"
+                >
+                  Get Started Free
+                </Link>
+                <Link
+                  to="/login"
+                  className="px-8 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-lg font-medium"
+                >
+                  Sign In
+                </Link>
+              </>
+            )}
           </div>
         </div>
 

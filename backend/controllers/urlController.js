@@ -57,7 +57,7 @@ const shortenUrl = async (req, res) => {
     // Add to cache
     urlCache.set(shortId, formattedUrl);
 
-    const shortUrl = `${req.protocol}://${req.get('host')}/${shortId}`;
+    const shortUrl = `${process.env.BASE_URL}/${shortId}`;
 
     res.status(201).json({
       success: true,
@@ -66,7 +66,8 @@ const shortenUrl = async (req, res) => {
         shortId: url.shortId,
         shortUrl,
         originalUrl: url.originalUrl,
-        createdAt: url.createdAt
+        createdAt: url.createdAt,
+        totalClicks: 0
       }
     });
   } catch (error) {
@@ -123,7 +124,7 @@ const redirectUrl = async (req, res) => {
     ).catch(err => console.error('Error logging click:', err));
 
     // Redirect
-    res.redirect(301, originalUrl);
+    res.redirect(302, originalUrl);
   } catch (error) {
     console.error('Redirect error:', error);
     res.status(500).json({ error: 'Server error during redirect' });
@@ -142,15 +143,15 @@ const getUserLinks = async (req, res) => {
     const urls = await Url.find({ userId: req.user._id })
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit)
-      .select('-clicks'); // Exclude clicks for performance
+      .limit(limit);
+
 
     const total = await Url.countDocuments({ userId: req.user._id });
 
     const urlsWithData = urls.map(url => ({
       shortId: url.shortId,
       originalUrl: url.originalUrl,
-      shortUrl: `${req.protocol}://${req.get('host')}/${url.shortId}`,
+      shortUrl: `${process.env.BASE_URL}/${url.shortId}`,
       totalClicks: url.clicks ? url.clicks.length : 0,
       createdAt: url.createdAt
     }));
@@ -226,7 +227,7 @@ const getAnalytics = async (req, res) => {
       data: {
         shortId: url.shortId,
         originalUrl: url.originalUrl,
-        shortUrl: `${req.protocol}://${req.get('host')}/${url.shortId}`,
+        shortUrl: `${process.env.BASE_URL}/${url.shortId}`,
         createdAt: url.createdAt,
         analytics: {
           totalClicks,

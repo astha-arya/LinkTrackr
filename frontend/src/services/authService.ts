@@ -19,6 +19,7 @@ interface AuthResponse {
     id: string;
     username: string;
     email: string;
+    createdAt: string;
   };
 }
 
@@ -29,6 +30,7 @@ interface UserProfileResponse {
     id: string;
     username: string;
     email: string;
+    createdAt: string;
   };
 }
 

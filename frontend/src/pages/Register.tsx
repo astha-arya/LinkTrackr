@@ -31,7 +31,8 @@ export default function Register() {
       toast.success('Registration successful!');
       navigate('/dashboard');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Registration failed');
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Registration failed';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -59,7 +60,7 @@ export default function Register() {
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="johndoe"
+                placeholder="Enter your username"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={loading}
               />
@@ -74,7 +75,7 @@ export default function Register() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="Enter your email"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={loading}
               />

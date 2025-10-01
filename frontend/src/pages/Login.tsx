@@ -25,7 +25,8 @@ export default function Login() {
       toast.success('Login successful!');
       navigate('/dashboard');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Login failed';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -53,7 +54,7 @@ export default function Login() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="Enter your email"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={loading}
               />

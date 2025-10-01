@@ -25,10 +25,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Check if the error is a 401 and that we are NOT on the login or register page
+    const isAuthError = error.response?.status === 401;
+    const isAuthEndpoint = error.config.url === '/auth/login' || error.config.url === '/auth/register';
+
+    if (isAuthError && !isAuthEndpoint) {
+      // This is an expired token for a logged-in user. Redirect to login.
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
+
+    // For all other errors (including failed logins), let the component handle it.
     return Promise.reject(error);
   }
 );

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
-import { Link as LinkIcon, LogOut, LayoutDashboard } from 'lucide-react';
+import { Link as LinkIcon, LogOut, LayoutDashboard, Home } from 'lucide-react'; // <-- Add Home icon
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -23,6 +23,13 @@ export default function Navbar() {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
+                <Link
+                  to="/"
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  <Home className="w-5 h-5" />
+                  <span>Home</span>
+                </Link>
                 <Link
                   to="/dashboard"
                   className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors"

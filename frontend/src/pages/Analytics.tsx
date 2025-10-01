@@ -44,6 +44,17 @@ const DEVICE_ICONS: Record<string, any> = {
   Other: HelpCircle,
 };
 
+const renderCustomLabel = (props: any) => {
+  const { name, percent } = props;
+
+  // If the percentage is 0, don't render a label
+  if (!percent || percent === 0) {
+    return null;
+  }
+
+  return `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`;
+};
+
 export default function Analytics() {
   const { shortId } = useParams<{ shortId: string }>();
   const navigate = useNavigate();
@@ -51,44 +62,41 @@ export default function Analytics() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const fetchAnalytics = async () => {
-    if (!shortId) return;
+    const fetchAnalytics = async () => {
+      if (!shortId) return;
 
-    try {
-      const response = await analyticsService.getAnalytics(shortId);
+      try {
+        const response = await analyticsService.getAnalytics(shortId);
+        const apiData = response.data.analytics;
+        const clicksByDateArray = Object.entries(apiData.clicksByDate).map(
+          ([date, clicks]) => ({ date, clicks: Number(clicks) })
+        );
 
-      // unwrap backend response
-      const apiData = response.data.analytics;
-
-      // transform clicksByDate { "2025-10-01": 2 } into array [{date, clicks}]
-      const clicksByDateArray = Object.entries(apiData.clicksByDate).map(
-        ([date, clicks]) => ({ date, clicks })
-      );
-
-      const transformed: AnalyticsData = {
-        shortId: response.data.shortId,
-        totalClicks: apiData.totalClicks,
-        deviceBreakdown: {
-          Desktop: apiData.deviceBreakdown.Desktop || 0,
-          Mobile: apiData.deviceBreakdown.Mobile || 0,
-          Tablet: apiData.deviceBreakdown.Tablet || 0,
-          Other: apiData.deviceBreakdown.Other || 0,
-        },
-        clicksByDate: clicksByDateArray,
-        recentClicks: apiData.recentClicks,
-      };
-
-      setAnalytics(transformed);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to load analytics');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchAnalytics();
-}, [shortId]);
-
+        const transformed: AnalyticsData = {
+          shortId: response.data.shortId,
+          totalClicks: apiData.totalClicks,
+          deviceBreakdown: {
+            Desktop: apiData.deviceBreakdown.Desktop || 0,
+            Mobile: apiData.deviceBreakdown.Mobile || 0,
+            Tablet: apiData.deviceBreakdown.Tablet || 0,
+            Other: apiData.deviceBreakdown.Other || 0,
+          },
+          clicksByDate: clicksByDateArray,
+          recentClicks: apiData.recentClicks,
+        };
+        setAnalytics(transformed);
+      } catch (error: any) {
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          'Failed to load analytics';
+        toast.error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, [shortId]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -155,7 +163,6 @@ export default function Analytics() {
               <MousePointerClick className="w-12 h-12 text-blue-600" />
             </div>
           </div>
-
           {Object.entries(analytics.deviceBreakdown).map(([device, count]) => {
             const Icon = DEVICE_ICONS[device];
             return (
@@ -206,10 +213,7 @@ export default function Analytics() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }: { name: string; percent?: number }) =>
-  `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`
-}
-
+                  label={renderCustomLabel}
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
